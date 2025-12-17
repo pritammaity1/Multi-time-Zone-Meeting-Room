@@ -22,9 +22,9 @@ export function toUserDateTimeFromRoom(
 //Format a time range in the room's local timezone
 export function formatRoomTimeRange(startISO, endISO, roomTimeZone) {
   const start = toRoomDateTime(startISO, roomTimeZone);
-  const end = toRoomDateTime.apply(endISO, roomTimeZone);
+  const end = toRoomDateTime(endISO, roomTimeZone);
 
-  if (!start.isValid || end.isValid) {
+  if (!start.isValid || !end.isValid) {
     return `${startISO} -> ${endISO}`;
   }
   const sameDay = start.hasSame(end, "day");
@@ -49,7 +49,7 @@ export function formatUserTimeRangeFromRoom(
   const start = toUserDateTimeFromRoom(startISO, roomTimeZone, userTimezone);
   const end = toUserDateTimeFromRoom(endISO, roomTimeZone, userTimezone);
 
-  if (!start.isValid || end.isValid) {
+  if (!start.isValid || !end.isValid) {
     return `${startISO} -> ${endISO}`;
   }
 

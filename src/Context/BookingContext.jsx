@@ -19,8 +19,8 @@ function intervalsOverlap(aStart, aEnd, bStart, bEnd) {
 const BookingContext = createContext(null);
 
 export const BookingProvider = ({ children }) => {
-  const [booking, setBooking] = useState([]);
-  const [loading, setLoading] = useState(flase);
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export const BookingProvider = ({ children }) => {
     fetchBooking()
       .then((data) => {
         if (!isMounted) return;
-        setBooking(data);
+        setBookings(data);
         setError(null);
       })
       .catch((err) => {
@@ -49,7 +49,7 @@ export const BookingProvider = ({ children }) => {
     setLoading(true);
     try {
       const data = await fetchBooking();
-      setBooking(data);
+      setBookings(data);
       setError(null);
     } catch (err) {
       setError(err.message || "Failed to refresh bookings");
@@ -62,7 +62,7 @@ export const BookingProvider = ({ children }) => {
     setLoading(true);
     try {
       const created = await createBooking(bookingInput);
-      setBooking((prev) => [...prev, created]);
+      setBookings((prev) => [...prev, created]);
       return { ok: true, booking: created };
     } catch (err) {
       return { ok: false, error: err.message || "Failed to create booking" };
@@ -75,7 +75,7 @@ export const BookingProvider = ({ children }) => {
     setLoading(true);
     try {
       const updated = await updateBooking(id, updates);
-      setBooking((prev) => prev.map((b) => (b.id === id ? update : b)));
+      setBookings((prev) => prev.map((b) => (b.id === id ? updated : b)));
       return { ok: true, booking: updated };
     } catch (err) {
       return { ok: false, error: err.message || "Failed to update booking" };
@@ -88,7 +88,7 @@ export const BookingProvider = ({ children }) => {
     setLoading(true);
     try {
       const updated = await cancelBooking(id);
-      setBooking((prev) => prev.map((b) => (b.id === id ? updated : id)));
+      setBookings((prev) => prev.map((b) => (b.id === id ? updated : b)));
       return { ok: true, booking: updated };
     } catch (err) {
       return { ok: false, error: err.message || "Failed to cancel booking" };
@@ -100,7 +100,7 @@ export const BookingProvider = ({ children }) => {
   // Delete conflicts (ver basic version)
   const conflicts = useMemo(() => {
     const byRoom = {};
-    booking.forEach((b) => {
+    bookings.forEach((b) => {
       if (b.status === "cancelled") return;
       if (!byRoom[b.roomId]) byRoom[b.roomId] = [];
       byRoom[b.roomId].push(b);
@@ -126,17 +126,17 @@ export const BookingProvider = ({ children }) => {
           if (intervalsOverlap(aStart, aEnd, bStart, bEnd)) {
             result.push({
               roomId,
-              booking: [a, b],
+              bookings: [a, b],
             });
           }
         }
       }
     });
     return result;
-  }, [booking]);
+  }, [bookings]);
 
   const value = {
-    booking,
+    bookings,
     loading,
     error,
     refreshBookings,
@@ -153,7 +153,7 @@ export const BookingProvider = ({ children }) => {
 
 export const useBookings = () => {
   const ctx = useContext(BookingContext);
-  if (!cyx) {
+  if (!ctx) {
     throw new Error("useBooking must be used within BookingProvider");
   }
   return ctx;

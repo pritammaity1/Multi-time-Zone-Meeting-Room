@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useBookings } from "../../Context/BookingContext";
 import { rooms, offices } from "../../Data/MockData";
 import {
@@ -7,112 +7,52 @@ import {
   getUserTimezone,
 } from "../../Utils/DateUtils";
 
-function getRoomAndOffice(roomId) {
-  const room = rooms.find((r) => r.id === roomId);
-  const office = room ? offices.find((o) => o.id === room.officeId) : undefined;
-
-  return { room, office };
-}
-
-const statusColors = {
-  scheduled: "bg-emerald-500/15 text-emerald-300 border-emerald-500/40",
-  cancelled: "bg-slate-600/15 text-slate-300 border-slate-500/40",
-  "no-show": "bg-amber-500/15 text-amber-300 border-amber-500/40",
-  attended: "bg-sky-500/15 text-sky-300 border-sky-500/40",
-};
+import BookingForm from "./BookingForm";
+import BookingItem from "./BookingItem";
 
 const BookingList = () => {
-  const { booking, loading, error } = useBookings();
-  const userTz = getUserTimezone();
+  const { bookings = [], loading, error } = useBookings();
+  const [showForm, setShowForm] = useState(false);
 
   if (loading) {
     return (
-      <p className="text-sm text-400 animate-pluse">Loading bookings...</p>
+      <p className="text-sm text-slate-400 animate-pulse">Loading bookings…</p>
     );
   }
 
-  if (!booking.length) {
-    return (
-      <div className="space-y-2">
-        <h2 className="text-lg font-semibold">All Bookings</h2>
-        <p className="text-sm text-slate-400">
-          No Bookings Yet. Create one from the room browser
-        </p>
-      </div>
-    );
+  if (error) {
+    return <p className="text-sm text-red-400">{error}</p>;
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between gap-2">
-        <h2 className="text-lg font-semibold">All Bookings</h2>
-        <p className="text-xs text-slate-500">
-          Times are shown in both room and your local timezone({userTz})
-        </p>
+    <div className="space-y-6">
+      {/* HEADER */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold tracking-tight">All Bookings</h2>
+
+        <button
+          onClick={() => setShowForm((s) => !s)}
+          className="px-4 py-2 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-sm transition"
+        >
+          {showForm ? "Close" : "New Booking"}
+        </button>
       </div>
 
-      <ul className="space-y-2 text-sm">
-        {booking.map((b) => {
-          const { room, office } = getRoomAndOffice(b.roomId);
-          const roomTimeZone = office?.timezone;
+      {/* CREATE BOOKING FORM */}
+      {showForm && <BookingForm onSuccess={() => setShowForm(false)} />}
 
-          const roomRange = roomTimeZone
-            ? formatRoomTimeRange(b.startTime, b.endTime, roomTimeZone)
-            : `${b.startTime} -> ${b.endTime}`;
-
-          const userRange =
-            roomTimeZone &&
-            formatUserTimeRangeFromRoom(
-              b.startTime,
-              b.endTime,
-              roomTimeZone,
-              userTz
-            );
-          const statusClass =
-            statusColors[b.status] || statusColors["scheduled"];
-
-          return (
-            <li
-              key={b.id}
-              className="px-3 py-3 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col gap-1 md:flex-row md:items-center md:justify-between"
-            >
-              <div>
-                <p className="font-medium text-slate-50">{b.title}</p>
-                <p className="text-xs text-slate-400">
-                  {room ? room.name : b.roomId}
-                  {""}
-                  {office && <span>• {office.name}</span>}
-                </p>
-                {roomTimeZone && (
-                  <>
-                    <p className="text-[11px] text-salte-300 mt-1">
-                      Room Time ({roomTimeZone}) : {""}
-                      <span className="font-medium"> {roomRange}</span>
-                    </p>
-                    <p className="text-[11px] text-slate-400">
-                      {" "}
-                      Your Time ({userTz}) : {userRange}
-                    </p>
-                  </>
-                )}
-              </div>
-
-              <div className="flex items-center gap-2 mt-2 md:mt-0">
-                {b.isRecurring && (
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-300 border border-sky-500/40">
-                    Weekly
-                  </span>
-                )}
-                <span
-                  className={`text-[10px] px-2 py-0.5 rounded-full border ${statusClass}`}
-                >
-                  {b.status}
-                </span>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+      {/* EMPTY STATE */}
+      {bookings.length === 0 ? (
+        <p className="text-sm text-slate-400">
+          No bookings yet. Create one from the Room Browser.
+        </p>
+      ) : (
+        <div className="space-y-3">
+          {bookings.map((booking) => (
+            <BookingItem key={booking.id} booking={booking} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

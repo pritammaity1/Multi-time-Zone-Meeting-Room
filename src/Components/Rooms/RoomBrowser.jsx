@@ -1,32 +1,33 @@
 import React from "react";
 import { DateTime } from "luxon";
-import { useBookings } from "../../Context/BookingContext";
+import { useBookings } from "../../Context/BookingContext.jsx";
 import { rooms, offices } from "../../Data/MockData";
 import { formatRoomTimeRange } from "../../Utils/DateUtils";
 
 const RoomBrowser = () => {
   const { bookings, conflicts } = useBookings();
 
-  // Groups rooms by office for display
+  // Group rooms by office for display
   const roomsByOffice = offices.map((office) => ({
     office,
     rooms: rooms.filter((r) => r.officeId === office.id),
   }));
 
-  const conflictingRoomId = new Set(conflicts.map((c) => c.roomId));
+  const conflictingRoomIds = new Set(conflicts.map((c) => c.roomId));
 
-  // Find Next upcoming booking for a room (in that office timezone)
-  const getNextBookingForRoom = (roomId, roomTimeZone) => {
-    const now = DateTime.now().setZone(roomTimeZone);
+  // Find next upcoming booking for a room (in that office's timezone)
+  const getNextBookingForRoom = (roomId, roomTimezone) => {
+    const now = DateTime.now().setZone(roomTimezone);
 
     const upcoming = bookings
       .filter((b) => b.roomId === roomId && b.status !== "cancelled")
       .map((b) => ({
         booking: b,
-        start: DateTime.formatISO(b.startTime, { zone: roomTimeZone }),
+        start: DateTime.fromISO(b.startTime, { zone: roomTimezone }),
       }))
       .filter((entry) => entry.start >= now)
       .sort((a, b) => a.start - b.start)[0];
+
     return upcoming?.booking || null;
   };
 
@@ -35,27 +36,26 @@ const RoomBrowser = () => {
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-lg font-semibold">Room Browser</h2>
         <p className="text-xs text-slate-500">
-          Conflicting rooms: {conflictingRoomId.size}
+          Conflicting rooms: {conflictingRoomIds.size}
         </p>
       </div>
 
       <div className="space-y-6">
-        {roomsByOffice.map(({ office, rooms }) => (
+        {roomsByOffice.map(({ office, rooms: officeRooms }) => (
           <section key={office.id} className="space-y-3">
             <div className="flex items-baseline justify-between">
               <h3 className="text-sm font-medium text-slate-200">
-                {office.name}
-                {""}
-                <span className="tetx-xs text-slate-500">
+                {office.name}{" "}
+                <span className="text-xs text-slate-500">
                   ({office.timezone})
                 </span>
               </h3>
             </div>
 
-            <div className=" grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {officeRooms.map((room) => {
                 const next = getNextBookingForRoom(room.id, office.timezone);
-                const hasConflict = conflictingRoomId.has(room.id);
+                const hasConflict = conflictingRoomIds.has(room.id);
 
                 const nextRange =
                   next &&
@@ -81,8 +81,8 @@ const RoomBrowser = () => {
                         <p className="text-sm font-semibold text-slate-50">
                           {room.name}
                         </p>
-                        <p className="text-xs text-salte-400">
-                          Capacity: {room.cpacity} people
+                        <p className="text-xs text-slate-400">
+                          Capacity: {room.capacity} people
                         </p>
                       </div>
 
@@ -97,13 +97,13 @@ const RoomBrowser = () => {
                       {next ? (
                         <>
                           <p className="text-slate-300">
-                            Next: {""}
+                            Next:{" "}
                             <span className="font-medium">{next.title}</span>
                           </p>
                           <p>{nextRange}</p>
                         </>
                       ) : (
-                        <p className="text-emerald-300">No Upcoming Bookings</p>
+                        <p className="text-emerald-300">No upcoming bookings</p>
                       )}
                     </div>
                   </div>
