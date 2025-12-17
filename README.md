@@ -1,16 +1,146 @@
-# React + Vite
+# Multi-time Zone Meeting Room
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive web application for efficiently managing and booking meeting rooms across multiple time zones. Built with React and Vite for optimal performance and developer experience.
 
-Currently, two official plugins are available:
+## 📋 Table of Contents
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+- [Project Structure](#project-structure)
+- [Available Scripts](#available-scripts)
+- [Contributing](#contributing)
 
-## React Compiler
+## 🎯 Overview
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The Multi-time Zone Meeting Room application is designed to streamline the booking and management of meeting rooms in distributed organizations. It intelligently handles time zone conversions to ensure seamless scheduling across global teams.
 
-## Expanding the ESLint configuration
+## ✨ Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **Room Management** - Browse and filter available meeting rooms
+- **Smart Booking System** - Intuitive booking interface with real-time availability
+- **Multi-timezone Support** - Automatic time zone conversion and scheduling
+- **Conflict Detection** - Identifies and prevents double-booking
+- **Responsive Design** - Works seamlessly across desktop, tablet, and mobile devices
+- **Real-time Updates** - Instant synchronization of room availability
+
+## 🛠 Tech Stack
+
+- **Frontend Framework**: React 19.2.0
+- **Build Tool**: Vite 7.2.4
+- **Styling**: Tailwind CSS 4.1.18
+- **Time Management**: Luxon 3.7.2
+- **State Management**: React Context API
+- **Code Quality**: ESLint 9.39.1
+- **Runtime**: ES Modules
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (v16 or higher)
+- npm or yarn package manager
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone <repository-url>
+cd Multi-time-Zone-Meeting-Room
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Start the development server:
+
+```bash
+npm run dev
+```
+
+The application will be available at `http://localhost:5173` (default Vite port).
+
+### Build for Production
+
+```bash
+npm run build
+```
+
+The optimized production build will be generated in the `dist` folder.
+
+### Preview Production Build
+
+```bash
+npm run preview
+```
+
+### Lint Code
+
+```bash
+npm run lint
+```
+
+## 📁 Project Structure
+
+```
+Multi-time Zone Meeting Room/
+├── src/
+│   ├── Components/          # React components
+│   │   ├── Bookings/        # Booking-related components
+│   │   ├── Conflicts/       # Conflict detection views
+│   │   ├── Layout/          # Layout components (Shell, Header, Sidebar)
+│   │   └── Rooms/           # Room browser and display components
+│   ├── Context/             # React Context for state management
+│   ├── Api/                 # API integration layer
+│   ├── Data/                # Mock data and fixtures
+│   ├── Utils/               # Utility functions (date handling, etc.)
+│   ├── App.jsx              # Main application component
+│   ├── main.jsx             # Application entry point
+│   └── index.css            # Global styles
+├── public/                  # Static assets
+├── vite.config.js          # Vite configuration
+├── eslint.config.js        # ESLint configuration
+├── package.json            # Project dependencies and scripts
+└── README.md              # This file
+```
+
+## 🔧 Available Scripts
+
+| Command           | Description                                          |
+| ----------------- | ---------------------------------------------------- |
+| `npm run dev`     | Start development server with hot module replacement |
+| `npm run build`   | Build optimized production bundle                    |
+| `npm run preview` | Preview production build locally                     |
+| `npm run lint`    | Run ESLint to check code quality                     |
+
+## 📚 Key Components
+
+### Bookings
+
+- **BookingForm** - Form component for creating/editing bookings
+- **BookingList** - Displays list of bookings
+- **BookingItem** - Individual booking display component
+
+### Rooms
+
+- **RoomBrowser** - Main room browsing interface
+- **RoomCard** - Individual room card component
+- **RoomFilter** - Filter and search functionality for rooms
+
+### Layout
+
+- **AppShell** - Main application wrapper
+- **HeaderBar** - Top navigation bar
+- **SideBar** - Navigation sidebar
+
+### Utilities
+
+- **DateUtils** - Time zone conversion and date formatting utilities
+- **BookingsApi** - Backend API communication layer
+
+---
