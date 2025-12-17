@@ -2,7 +2,21 @@
 
 A modern, responsive web application for efficiently managing and booking meeting rooms across multiple time zones. Built with React and Vite for optimal performance and developer experience.
 
-## 📋 Table of Contents
+## � Screenshots
+
+### Room Browser
+
+![Room Browser](src/assets/Screenshot%202025-12-17%20230543.png)
+
+### Bookings View
+
+![Bookings View](src/assets/Screenshot%202025-12-17%20230549.png)
+
+### Conflicts Detection
+
+![Conflicts Detection](src/assets/Screenshot%202025-12-17%20230556.png)
+
+## �📋 Table of Contents
 
 - [Overview](#overview)
 - [Features](#features)
